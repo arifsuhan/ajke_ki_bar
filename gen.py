@@ -18,13 +18,13 @@ class HelloCalendar:
 
 	def get_day_details(self, date):
 		datem = datetime.strptime(date, self.format)
-		return [ datem.weekday(), calendar.day_name[datem.weekday()], datem.day, datem.month, datem.year]
+		return [ date, datem.day, datem.month, datem.year, datem.weekday(), calendar.day_name[datem.weekday()]]
 
 	def run(self):
-		calender_data = self.get_date_list("01-05-10000", "07-05-10000")
+		calender_data = self.get_date_list("01-05-1000", "07-05-1000")
 		
-		for i in calender_data:
-			temp = self.get_day_details(i)
-			print(temp)
+		# for i in calender_data:
+		# 	temp = self.get_day_details(i)
+		# 	print(temp)
 
-HelloCalendar("%d-%m-%Y").run()
+		return [self.get_day_details(i) for i in calender_data]

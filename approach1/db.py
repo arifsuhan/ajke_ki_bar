@@ -3,13 +3,13 @@ from sqlite3 import Error
 
 class sqlite_crud:
 
-    def __init__(self, db_name, table_name, schema):
+    def __init__(self, db_name, table_name):
         self.db_name = db_name
         self.table_name = table_name
         self.con = None
         self.cur = None
-        self.schema = schema # schema must be dict
         self.pID = 0
+        self.schema = None # schema must be dict
 
     def create_connection(self):
         try:
@@ -18,9 +18,13 @@ class sqlite_crud:
         except Error as e:
             print(e)
 
-    def create_table(self):
+    def create_table(self, schema):
+        
+        self.schema = schema
+
         try:
             query = "CREATE TABLE " + self.table_name + " (" + ','.join(self.schema) + ");"
+            print(query)
             self.cur.execute(query)
         except Error as e:
             print(e)
@@ -29,6 +33,7 @@ class sqlite_crud:
         # data must be list 
         query_assist = ",".join([ "?" for _ in range(len(data))])
         query = "INSERT INTO "+ self.table_name + "(" + ','.join(self.schema) + ") VALUES(" + query_assist + ");"
+        print(query)
         self.cur.execute(query, data)
         self.con.commit()
         self.pID = self.cur.lastrowid
@@ -50,6 +55,13 @@ class sqlite_crud:
 
         for row in rows:
             print(row)
+    
+    def query_data(self, query_key, query_value):
+        query = "SELECT * FROM "+ self.table_name +" WHERE "+ query_key +"='"+ query_value +"'"
+        # print(query)
+        self.cur.execute(query)
+        rows = self.cur.fetchall()
+        return rows
 
     def delete_task(self, id):
         sql = 'DELETE FROM '+ self.table_name + 'WHERE id=?'

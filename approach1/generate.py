@@ -20,11 +20,6 @@ class HelloCalendar:
 		datem = datetime.strptime(date, self.format)
 		return [ date, datem.day, datem.month, datem.year, datem.weekday(), calendar.day_name[datem.weekday()]]
 
-	def run(self):
-		calender_data = self.get_date_list("01-05-1000", "07-05-1000")
-		
-		# for i in calender_data:
-		# 	temp = self.get_day_details(i)
-		# 	print(temp)
-
+	def run(self, start_date, end_date):
+		calender_data = self.get_date_list(start_date, end_date)
 		return [self.get_day_details(i) for i in calender_data]

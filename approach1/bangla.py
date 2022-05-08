@@ -2,6 +2,7 @@
 # https://github.com/sharifrahaman/bengali-date-converter
 # http://www.banglatext.com/bangla-date-converter.html
 # https://github.com/search?o=desc&q=bangla+date+converter&s=stars&type=Repositories
+# https://en.wikipedia.org/wiki/Bengali_calendars
 
 from datetime import datetime
 import calendar
@@ -11,9 +12,10 @@ class BanglaCalender:
     def __init__(self, format):
         self.format = format
         # self.bangla_utils = self.bangla_utils()
-        self.bangla_month_name = ["BOISHAKH","JYOISHTHO","ASHARH","SHRABON","BHADRO","ASHBIN","KARTIK","OGROHAYON","POUSH","MAGH","FALGUN","CHOITRO"]
+        self.bangla_month_name = ["BOISHAKH","JYOISHTHO","ASHARH","SHRABON","BHADRO","Ashshin","KARTIK","OGROHAYON","POUSH","MAGH","FALGUN","CHOITRO"]
         self.english_month_name = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
         self.date = 0
+        self.year_flag = 0
 
     def get_date(self):
         year = self.date.year
@@ -27,35 +29,39 @@ class BanglaCalender:
         self.date = datetime.strptime(date, self.format)
     
     def get_bangla_month(self):
-        month = self.date.month
-        day = self.date.day
-        diff = abs(month-4)
-
-        if diff >= 4 and day >= 14:
-            bangla_month = diff
-        else:
-            bangla_month = 0
-        
-        return bangla_month, self.bangla_month_name[bangla_month]
+        pass
         
     def get_bangla_day(self):
         # Start from April 14 of non-leap year because that 1st day of Bengali year
 
         # The first five months of the year from Bôishakh to Bhadrô will 
 		# consist of 31 days each
-        base = datetime.strptime('14-04-2022', self.format)
+        year = self.date.year
+
+        if self.year_flag == -1:
+            year -= 1
+        
+        print(year)
+        isLeap = calendar.isleap(year)
+        base = datetime.strptime('14-04-'+str(year), self.format)
         diff = (self.date - base).days
         temp1 = int(diff/31)
         temp2 = diff%31
 
-        if temp1 > 6 and temp2 > 0:
+        if temp1 > 5 and temp2 > 0:
             diff = diff - (31*6)
-            temp1 = int(diff/30)
+            temp1 = int(diff/30) + 6
             temp2 = diff%30
-        
-        # print(diff, temp1, temp2)
-        print(self.date.day , self.english_month_name[self.date.month-1], "->", temp2+1, self.bangla_month_name[temp1])
-        return 0
+            print(diff, temp1, temp2)
+
+        # need to handle:
+        # leapyear for falgun
+        if isLeap and temp1 == 10 and temp2 == 29:
+            pass
+
+        # handle previous bangla year - 1st january to 13th april
+        # print(self.date.day , self.english_month_name[self.date.month-1], "->", temp2+1, self.bangla_month_name[temp1])
+        return temp1, temp2+1
     
     # Credit: https://github.com/sharifrahaman/bengali-date-converter/blob/master/bangladateconverter/src/main/java/com/softdaemon/bangla/date/converter/BanglaDateUtils.java
     # Written in JAVA
@@ -76,15 +82,14 @@ class BanglaCalender:
 		# else:
 		# 	banglaDay = temp["day"]
 
-        banglaDay = self.get_bangla_day()
-		
-
-		# Get Month Name from Map
-        banglaMonth, banglaMonthName = self.get_bangla_month()
-
 		# Calculate Bangla Year from the English year
         if (month < 3 or (month == 3 and day < 14)):
             banglaYearStarted+=1
+            self.year_flag = -1
+        else:
+            self.year_flag = 1
         banglaYear = year - banglaYearStarted
 
-        return banglaDay, banglaMonth, banglaYear
+        banglaMonth, banglaDay = self.get_bangla_day()
+
+        return banglaDay, self.bangla_month_name[banglaMonth], banglaYear

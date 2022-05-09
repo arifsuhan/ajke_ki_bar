@@ -1,6 +1,6 @@
 ### What day is today? 
 **আজকে কি বার?**
-- Find to find out the Day of the Week For Any Date from Gregorian calendar, Bangla and Arabic one.
+- Purpose: Find out the Day of the Week For Any Date from Gregorian calendar, Bangla and Arabic one.
 
 **Approach**
 1. Keep Calender in Database - worse solution
